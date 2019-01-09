@@ -58,6 +58,15 @@ namespace Tsla.Works.Controllers
             return json;
         }
 
+        [HttpPost]
+        public JsonResult IsAwake()
+        {
+            bool result = Task.Run<bool>(async () => await AccountController.IsAwake()).Result;
+
+            JsonResult json = new JsonResult(result);
+
+            return json;
+        }
         public IActionResult About()
         {
             ViewData["Message"] = "Your application description page.";

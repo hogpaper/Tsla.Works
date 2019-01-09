@@ -5,21 +5,32 @@
 @section scripts {
     <script type="text/javascript">
 
-    $(document).ready(function () {
-        $('#WakeButton').click(function () {
-            alert('hi');
-            data = {};
+        $(document).ready(function () {
+            $('#WakeButton').click(function () {
+                waitingDialog.show('Loading Something...');
+                data = {};
 
-            AjaxCall('@Url.Action("Wake", "Home")', data, 'POST', CommandDone);
+                AjaxCall('@Url.Action("Wake", "Home")', data, 'POST', CommandWaiting);
+            });
         });
-    });
 
-    function CommandDone(data) {
-        alert(data);
-    }
 
-    function AjaxCall(url, data, method, successFunction) {
-        $.ajax({
+        function CommandWaiting(data) {
+            debugger;
+            if (data != true) {
+                AjaxCall('@Url.Action("IsAwake", "Home")', data, 'POST', CommandWaiting);
+            }
+            else {
+                CommandDone(data);
+            }
+        };
+
+        function CommandDone(data) {
+            waitingDialog.hide();
+        }
+
+        function AjaxCall(url, data, method, successFunction) {
+            $.ajax({
                 url: url,
                 type: method,
                 data: data, //{ file: signature },
@@ -43,7 +54,7 @@
                     }
                 }
             });
-    }
+        };
     </script>
     }
 
