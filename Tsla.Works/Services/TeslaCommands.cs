@@ -1,7 +1,11 @@
-﻿using System;
+﻿using Microsoft.Extensions.Configuration;
+using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net.Http;
+using System.Text;
 using System.Threading.Tasks;
 using Tsla.Works.Models;
 
@@ -10,6 +14,7 @@ namespace Tsla.Works.Services
     public class TeslaCommands
     {
         private static HttpClient client = new HttpClient();
+        public static IConfigurationRoot Configuration { get; set; }
 
         public static async Task<Vehicles> GetVehicles(string token)
         {
@@ -65,11 +70,55 @@ namespace Tsla.Works.Services
             return awake;
         }
 
-        private static void SetupHeaders(string token)
+        public static async Task<TeslaOAuthResponse> Authenticate(string email, string pwd)
+        {
+            TeslaOAuthResponse teslaOauthResponse = null;
+            try
+            {
+                Uri url = new Uri("https://owner-api.teslamotors.com/oauth/token?grant_type=password");
+
+                var builder = new ConfigurationBuilder().SetBasePath(Directory.GetCurrentDirectory()).AddJsonFile("appsettings.json");
+
+                Configuration = builder.Build();
+
+                string client_id = Configuration.GetSection("TeslaSettings:client_id").Value;
+                string client_secret = Configuration.GetSection("TeslaSettings:client_secret").Value;
+
+                TeslaOAuth oAuth = new TeslaOAuth()
+                {
+                    grant_type = "password",
+                    client_id = client_id,
+                    client_secret = client_secret,
+                    email = email,
+                    password = pwd
+                };
+
+                SetupHeaders();
+
+                StringContent stringContent = new StringContent(JsonConvert.SerializeObject((object)oAuth), Encoding.UTF8, "application/json");
+                HttpResponseMessage response = await client.PostAsync(url, stringContent);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    teslaOauthResponse = await response.Content.ReadAsAsync<TeslaOAuthResponse>().ConfigureAwait(false);
+                }
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+
+            return teslaOauthResponse;
+        }
+
+        private static void SetupHeaders(string token=null)
         {
             client.DefaultRequestHeaders.Remove("Authorization");
-            string bearer = string.Format("bearer {0}", token);
-            client.DefaultRequestHeaders.Add("Authorization", bearer);
+            if (token != null)
+            {
+                string bearer = string.Format("bearer {0}", token);
+                client.DefaultRequestHeaders.Add("Authorization", bearer);
+            }
             client.DefaultRequestHeaders.Remove("User-Agent");
             client.DefaultRequestHeaders.Add("User-Agent", "tsla.works");
         }

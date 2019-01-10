@@ -84,32 +84,6 @@ namespace Tsla.Works.Controllers
             return signInResult;
         }
 
-        public static async Task<TeslaOAuthResponse> Authenticate(string email, string pwd)
-        {
-            TeslaOAuthResponse teslaOauthResponse;
-            try
-            {
-                Uri url = new Uri("https://owner-api.teslamotors.com/oauth/token?grant_type=password");
-                TeslaOAuth oAuth = new TeslaOAuth()
-                {
-                    grant_type = "password",
-                    client_id = "81527cff06843c8634fdc09e8ac0abefb46ac849f38fe1e431c2ef2106796384",
-                    client_secret = "c7257eb71a564034f9419ee651c7d0e5f7aa6bfbd18bafb5c5c033b093bb2fa3",
-                    email = email,
-                    password = pwd
-                };
-                StringContent stringContent = new StringContent(JsonConvert.SerializeObject((object)oAuth), Encoding.UTF8, "application/json");
-                TeslaOAuthResponse valid = await AccountController.ApiPost(url, (HttpContent)stringContent);
-                teslaOauthResponse = valid;
-            }
-            catch (Exception)
-            {
-                throw;
-            }
-
-            return teslaOauthResponse;
-        }
-
         private static async Task<bool> ApiPost(Uri url)
         {
             bool success = false;
@@ -155,7 +129,7 @@ namespace Tsla.Works.Controllers
             ViewData["ReturnUrl"] = returnUrl;
             if (ModelState.IsValid)
             {
-                var result = await Authenticate(model.Email, model.Password);// Task.Run<TeslaOAuthResponse>(async () => await Authenticate()).Result;
+                var result = await TeslaCommands.Authenticate(model.Email, model.Password);// Task.Run<TeslaOAuthResponse>(async () => await Authenticate()).Result;
 
                 // This doesn't count login failures towards account lockout
                 // To enable password failures to trigger account lockout, set lockoutOnFailure: true
