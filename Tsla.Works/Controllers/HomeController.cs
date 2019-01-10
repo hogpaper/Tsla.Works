@@ -63,6 +63,30 @@ namespace Tsla.Works.Controllers
         }
 
         [HttpPost]
+        public JsonResult StopCharging(string id)
+        {
+            TeslaOAuthResponse authResponse = CookieCheck();
+
+            bool result = Task.Run<bool>(async () => await TeslaCommands.StopCharging(authResponse.access_token, id)).Result;
+
+            JsonResult json = new JsonResult(result);
+
+            return json;
+        }
+
+        [HttpPost]
+        public JsonResult StartCharging(string id)
+        {
+            TeslaOAuthResponse authResponse = CookieCheck();
+
+            bool result = Task.Run<bool>(async () => await TeslaCommands.StartCharging(authResponse.access_token, id)).Result;
+
+            JsonResult json = new JsonResult(result);
+
+            return json;
+        }
+
+        [HttpPost]
         public JsonResult IsAwake(string id)
         {
             TeslaOAuthResponse authResponse = CookieCheck();
@@ -83,7 +107,7 @@ namespace Tsla.Works.Controllers
 
         public IActionResult Contact()
         {
-            ViewData["Message"] = "Your contact page.";
+            ViewData["Message"] = "Contact";
 
             return View();
         }

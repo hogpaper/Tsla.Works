@@ -52,6 +52,30 @@ namespace Tsla.Works.Services
             return response;
         }
 
+        public static async Task<bool> StopCharging(string token, string id)
+        {
+            bool response = false;
+            string url = string.Format("https://owner-api.teslamotors.com/api/1/vehicles/{0}/command/charge_stop", id);
+            Uri uri = new Uri(url);
+
+            SetupHeaders(token);
+
+            response = await ApiPost(uri);
+            return response;
+        }
+
+        public static async Task<bool> StartCharging(string token, string id)
+        {
+            bool response = false;
+            string url = string.Format("https://owner-api.teslamotors.com/api/1/vehicles/{0}/command/charge_start", id);
+            Uri uri = new Uri(url);
+
+            SetupHeaders(token);
+
+            response = await ApiPost(uri);
+            return response;
+        }
+
         public static async Task<bool> IsAwake(string token, string id)
         {
             bool awake = false;
@@ -128,7 +152,10 @@ namespace Tsla.Works.Services
             bool success = false;
             HttpResponseMessage response = await client.PostAsync(url, (HttpContent)null);
             if (response.IsSuccessStatusCode)
+            {
                 success = true;
+            }
+
             return success;
         }
     }

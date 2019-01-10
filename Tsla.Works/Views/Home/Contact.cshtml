@@ -1,17 +1,33 @@
 ﻿@{
     ViewData["Title"] = "Contact";
 }
-<h2>@ViewData["Title"]</h2>
+@*<h2>@ViewData["Title"]</h2>*@
 <h3>@ViewData["Message"]</h3>
-
 <address>
-    One Microsoft Way<br />
-    Redmond, WA 98052-6399<br />
-    <abbr title="Phone">P:</abbr>
-    425.555.0100
+    <strong>Email Me:</strong> <a href="mailto:tslaworks@crandalls.net">tslaworks@crandalls.net</a><br />
+    <a href="https://twitter.com/dcwasteland?ref_src=twsrc%5Etfw" class="twitter-follow-button" data-show-count="false">Follow @@dcwasteland</a>
+    <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
 </address>
+<div class="row">
+    <div class="col-sm-3">
+        <h3>Donate</h3>
+    </div>
+</div>
+<div class="row">
+    <div class="col-sm-3">
+        <img src="~/images/BC_Logotype.png" style="max-height: 200px; max-width: 200px;" /><br />
+        <a href="bitcoin:34ww4jG4Uh9S9HCtGLPCJFWR3f3QN6FJcY"><img src="~/images/canvas.png" style="height: 200px; width: 200px;" /></a>
+        <br />
+        <label>34ww4jG4Uh9S9HCtGLPCJFWR3f3QN6FJcY</label>
+    </div>
+    <div class="col-sm-3">
+        <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
+            <input type="hidden" name="cmd" value="_donations" />
+            <input type="hidden" name="business" value="6VD2CSQP6HQ34" />
+            <input type="hidden" name="currency_code" value="USD" />
+            <input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif" border="0" name="submit" title="PayPal - The safer, easier way to pay online!" alt="Donate with PayPal button" />
+            <img alt="" border="0" src="https://www.paypal.com/en_US/i/scr/pixel.gif" width="1" height="1" />
+        </form>
+    </div>
+</div>
 
-<address>
-    <strong>Support:</strong> <a href="mailto:Support@example.com">Support@example.com</a><br />
-    <strong>Marketing:</strong> <a href="mailto:Marketing@example.com">Marketing@example.com</a>
-</address>

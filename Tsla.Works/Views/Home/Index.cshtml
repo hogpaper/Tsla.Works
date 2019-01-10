@@ -14,6 +14,22 @@
 
                 AjaxCall('@Url.Action("Wake", "Home")', data, 'POST', CommandWaiting);
             });
+
+            $('#StopChargingButton').click(function () {
+                waitingDialog.show('Stopping Charging...');
+                debugger;
+                data = { id: $("#vehicles option:selected").val()};
+
+                AjaxCall('@Url.Action("StopCharging", "Home")', data, 'POST', CommandWaiting);
+            });
+
+            $('#StartChargingButton').click(function () {
+                waitingDialog.show('Starting to Charge...');
+                debugger;
+                data = { id: $("#vehicles option:selected").val()};
+
+                AjaxCall('@Url.Action("StartCharging", "Home")', data, 'POST', CommandWaiting);
+            });
         });
 
 
@@ -75,7 +91,11 @@
         </div>
     </div>
     <button type="button" id="WakeButton" value="Wake" class="button">Wake</button>
-    <div id="myCarousel" class="carousel slide" data-ride="carousel" data-interval="6000">
+    <button type="button" id="StopChargingButton" value="Wake" class="button">Stop Charging</button>
+    <button type="button" id="StartChargingButton" value="Wake" class="button">Start Charging</button>
+    <br />
+    <a href="@Url.Action("Contact","Home")">Donate</a>
+    @*<div id="myCarousel" class="carousel slide" data-ride="carousel" data-interval="6000">
         <ol class="carousel-indicators">
             <li data-target="#myCarousel" data-slide-to="0" class="active"></li>
             <li data-target="#myCarousel" data-slide-to="1"></li>
@@ -136,9 +156,9 @@
             <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
             <span class="sr-only">Next</span>
         </a>
-    </div>
+    </div>*@
 
-    <div class="row">
+    @*<div class="row">
         <div class="col-md-3">
             <h2>Application uses</h2>
             <ul>
@@ -176,4 +196,4 @@
                 <li><a href="https://go.microsoft.com/fwlink/?LinkID=398609">Publish to Microsoft Azure Web Apps</a></li>
             </ul>
         </div>
-    </div>
+    </div>*@
