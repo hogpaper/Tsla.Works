@@ -30,6 +30,22 @@
 
                 AjaxCall('@Url.Action("StartCharging", "Home")', data, 'POST', CommandWaiting);
             });
+
+            $('#Unlock').click(function () {
+                waitingDialog.show('Unlocking...');
+                debugger;
+                data = { id: $("#vehicles option:selected").val()};
+
+                AjaxCall('@Url.Action("Unlock", "Home")', data, 'POST', CommandWaiting);
+            });
+
+            $('#Lock').click(function () {
+                waitingDialog.show('Locking...');
+                debugger;
+                data = { id: $("#vehicles option:selected").val()};
+
+                AjaxCall('@Url.Action("Lock", "Home")', data, 'POST', CommandWaiting);
+            });
         });
 
 
@@ -76,26 +92,29 @@
             });
         };
     </script>
-    }
+}
 
-    <div class="row">
-        <div class="col-sm-3">
-            <select class="form-control" id="vehicles">
-                @{
-                    foreach (Response t in Model.response)
-                    {
-                        <option value="@t.id">@t.display_name</option>
-                    }
+<div class="row">
+    <div class="col-sm-3">
+        <select class="form-control" id="vehicles">
+            @{
+                foreach (Response t in Model.response)
+                {
+                    <option value="@t.id">@t.display_name</option>
                 }
-            </select>
-        </div>
+            }
+        </select>
     </div>
-    <button type="button" id="WakeButton" value="Wake" class="button">Wake</button>
-    <button type="button" id="StopChargingButton" value="Wake" class="button">Stop Charging</button>
-    <button type="button" id="StartChargingButton" value="Wake" class="button">Start Charging</button>
-    <br />
-    <a href="@Url.Action("Contact","Home")">Donate</a>
-    @*<div id="myCarousel" class="carousel slide" data-ride="carousel" data-interval="6000">
+</div>
+<button type="button" id="WakeButton" value="Wake" class="button">Wake</button>
+<button type="button" id="StopChargingButton" value="Wake" class="button">Stop Charging</button>
+<button type="button" id="StartChargingButton" value="Wake" class="button">Start Charging</button>
+<br />
+<button type="button" id="Unlock" value="Wake" class="button">Unlock</button>
+<button type="button" id="Lock" value="Wake" class="button">Lock</button>
+<br />
+<a href="@Url.Action("Contact","Home")">Donate</a>
+@*<div id="myCarousel" class="carousel slide" data-ride="carousel" data-interval="6000">
         <ol class="carousel-indicators">
             <li data-target="#myCarousel" data-slide-to="0" class="active"></li>
             <li data-target="#myCarousel" data-slide-to="1"></li>
@@ -158,7 +177,7 @@
         </a>
     </div>*@
 
-    @*<div class="row">
+@*<div class="row">
         <div class="col-md-3">
             <h2>Application uses</h2>
             <ul>
