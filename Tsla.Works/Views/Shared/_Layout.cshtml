@@ -67,6 +67,13 @@
         <script src="~/js/site.min.js" asp-append-version="true"></script>
     </environment>
     <script src="~/js/bootstrap-waitingfor.min.js" asp-append-version="true"></script>
+    <script type="text/javascript">
+        
+        if (window.location.protocol == 'http:' && window.location.hostname.includes('tsla.works')) {
+
+            window.location.replace('https://www.tsla.works');
+        }
+    </script>
     @RenderSection("Scripts", required: false)
 </body>
 </html>

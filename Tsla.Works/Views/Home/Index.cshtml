@@ -5,79 +5,81 @@
 
 @section scripts {
 <script type="text/javascript">
-
-        $(document).ready(function () {
-            $('#WakeButton').click(function () {
-                Command('Waking...', '@Url.Action("Wake", "Home")');
-            });
-
-            $('#StopChargingButton').click(function () {
-                Command('Stop Charging...', '@Url.Action("StopCharging", "Home")');
-            });
-
-            $('#StartChargingButton').click(function () {
-                Command('Begin Charging...', '@Url.Action("StartCharging", "Home")');
-            });
-
-            $('#Unlock').click(function () {
-                Command('Unlocking...', '@Url.Action("Unlock", "Home")');
-            });
-
-            $('#Lock').click(function () {
-                Command('Locking...', '@Url.Action("Lock", "Home")');
-            });
+            
+    $(document).ready(function () {
+        $('#WakeButton').click(function () {
+            Command('Waking...', '@Url.Action("Wake", "Home")');
         });
 
-        function Command(dialog, command) {
-            waitingDialog.show(dialog);
+        $('#StopChargingButton').click(function () {
+            Command('Stop Charging...', '@Url.Action("StopCharging", "Home")');
+        });
 
-            data = { id: $("#vehicles option:selected").val()};
+        $('#StartChargingButton').click(function () {
+            Command('Begin Charging...', '@Url.Action("StartCharging", "Home")');
+        });
 
-            AjaxCall(command, data, 'POST', CommandWaiting);
+        $('#Unlock').click(function () {
+            Command('Unlocking...', '@Url.Action("Unlock", "Home")');
+        });
+
+        $('#Lock').click(function () {
+            Command('Locking...', '@Url.Action("Lock", "Home")');
+        });
+
+        $('#Honk').click(function () {
+            Command('Honk...', '@Url.Action("Honk", "Home")');
+        });
+    });
+
+    function Command(dialog, command) {
+        waitingDialog.show(dialog);
+
+        data = { id: $("#vehicles option:selected").val()};
+
+        AjaxCall(command, data, 'POST', CommandWaiting);
+    }
+
+    function CommandWaiting(data) {
+        if (data != true) {
+            data = { id: $("#vehicles option:selected").val() };
+            AjaxCall('@Url.Action("IsAwake", "Home")', data, 'POST', CommandWaiting);
         }
-
-        function CommandWaiting(data) {
-            debugger;
-            if (data != true) {
-                data = { id: $("#vehicles option:selected").val() };
-                AjaxCall('@Url.Action("IsAwake", "Home")', data, 'POST', CommandWaiting);
-            }
-            else {
-                CommandDone(data);
-            }
-        };
-
-        function CommandDone(data) {
-            waitingDialog.hide();
+        else {
+            CommandDone(data);
         }
+    };
 
-        function AjaxCall(url, data, method, successFunction) {
-            $.ajax({
-                url: url,
-                type: method,
-                data: data, //{ file: signature },
-                traditional: true,
-                error: function (e, t, m) {
-                    if (t === "timeout") {
-                        alert("Your connection to the internet has been interrupted. Data not saved.");
-                        $(document).children().remove();
-                        window.location.href = "/Home/Logout";
-                    } else {
-                        alert("Error. Data not saved. " + e.responseText);
-                    }
-                },
-                dataType: "json",
-                success: function (data, x, y) {
-                    if (x != "success") {
-                        debugger;
-                        alert("Error. Data not saved.");
-                    }
-                    else {
-                        successFunction(data);
-                    }
+    function CommandDone(data) {
+        waitingDialog.hide();
+    }
+
+    function AjaxCall(url, data, method, successFunction) {
+        $.ajax({
+            url: url,
+            type: method,
+            data: data, //{ file: signature },
+            traditional: true,
+            error: function (e, t, m) {
+                if (t === "timeout") {
+                    alert("Your connection to the internet has been interrupted. Data not saved.");
+                    $(document).children().remove();
+                    window.location.href = "/Home/Logout";
+                } else {
+                    alert("Error. Data not saved. " + e.responseText);
                 }
-            });
-        };
+            },
+            dataType: "json",
+            success: function (data, x, y) {
+                if (x != "success") {
+                    alert("Error. Data not saved.");
+                }
+                else {
+                    successFunction(data);
+                }
+            }
+        });
+    };
 </script>
 }
 
@@ -92,6 +94,7 @@
             }
         </select>
     </div>
+    <div class="col-sm-3">Offline</div>
 </div>
 <button type="button" id="WakeButton" value="Wake" class="button">Wake</button>
 <button type="button" id="StopChargingButton" value="Wake" class="button">Stop Charging</button>
@@ -99,6 +102,7 @@
 <br />
 <button type="button" id="Unlock" value="Wake" class="button">Unlock</button>
 <button type="button" id="Lock" value="Wake" class="button">Lock</button>
+<button type="button" id="Honk" value="Wake" class="button">Honk</button>
 <br />
 <a href="@Url.Action("Contact","Home")">Donate</a>
 @*<div id="myCarousel" class="carousel slide" data-ride="carousel" data-interval="6000">

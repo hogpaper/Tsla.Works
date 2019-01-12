@@ -127,6 +127,16 @@ namespace Tsla.Works.Controllers
         }
 
         [HttpPost]
+        public JsonResult Honk(string id)
+        {
+            bool result = Task.Run<bool>(async () => await TeslaCommands.Honk(id)).Result;
+
+            JsonResult json = new JsonResult(result);
+
+            return json;
+        }
+
+        [HttpPost]
         public JsonResult IsAwake(string id)
         {
             bool result = Task.Run<bool>(async () => await TeslaCommands.IsAwake(id)).Result;

@@ -86,6 +86,15 @@ namespace Tsla.Works.Services
             return await Command(url);
         }
 
+        public async Task<bool> Honk(string id)
+        {
+            Id = id;
+
+            string url = string.Format("https://owner-api.teslamotors.com/api/1/vehicles/{0}/command/honk_horn", Id);
+
+            return await Command(url);
+        }
+
         public async Task<bool> Command(string url)
         {
             WakeUp(Id);
