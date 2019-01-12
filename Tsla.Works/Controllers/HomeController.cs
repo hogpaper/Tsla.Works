@@ -137,6 +137,46 @@ namespace Tsla.Works.Controllers
         }
 
         [HttpPost]
+        public JsonResult OpenChargePort(string id)
+        {
+            bool result = Task.Run<bool>(async () => await TeslaCommands.OpenChargePort(id)).Result;
+
+            JsonResult json = new JsonResult(result);
+
+            return json;
+        }
+
+        [HttpPost]
+        public JsonResult CloseChargePort(string id)
+        {
+            bool result = Task.Run<bool>(async () => await TeslaCommands.CloseChargePort(id)).Result;
+
+            JsonResult json = new JsonResult(result);
+
+            return json;
+        }
+
+        [HttpPost]
+        public JsonResult Trunk(string id)
+        {
+            bool result = Task.Run<bool>(async () => await TeslaCommands.OpenTrunk(id, "rear")).Result;
+
+            JsonResult json = new JsonResult(result);
+
+            return json;
+        }
+
+        [HttpPost]
+        public JsonResult Frunk(string id)
+        {
+            bool result = Task.Run<bool>(async () => await TeslaCommands.OpenTrunk(id, "front")).Result;
+
+            JsonResult json = new JsonResult(result);
+
+            return json;
+        }
+
+        [HttpPost]
         public JsonResult IsAwake(string id)
         {
             bool result = Task.Run<bool>(async () => await TeslaCommands.IsAwake(id)).Result;

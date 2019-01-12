@@ -4,8 +4,8 @@
 }
 
 @section scripts {
-<script type="text/javascript">
-            
+    <script type="text/javascript">
+
     $(document).ready(function () {
         $('#WakeButton').click(function () {
             Command('Waking...', '@Url.Action("Wake", "Home")');
@@ -29,6 +29,22 @@
 
         $('#Honk').click(function () {
             Command('Honk...', '@Url.Action("Honk", "Home")');
+        });
+
+        $('#Trunk').click(function () {
+            Command('Opening Rear Trunk...', '@Url.Action("Trunk", "Home")');
+        });
+
+        $('#Frunk').click(function () {
+            Command('Opening Frunk :) ...', '@Url.Action("Frunk", "Home")');
+        });
+
+        $('#OpenPort').click(function () {
+            Command('Opening Charge Port :) ...', '@Url.Action("OpenChargePort", "Home")');
+        });
+
+        $('#ClosePort').click(function () {
+            Command('Closing Charge Port :) ...', '@Url.Action("CloseChargePort", "Home")');
         });
     });
 
@@ -80,7 +96,7 @@
             }
         });
     };
-</script>
+    </script>
 }
 
 <div class="row">
@@ -94,16 +110,28 @@
             }
         </select>
     </div>
-    <div class="col-sm-3">Offline</div>
+    @*<div class="col-sm-3">Offline</div>*@
 </div>
-<button type="button" id="WakeButton" value="Wake" class="button">Wake</button>
-<button type="button" id="StopChargingButton" value="Wake" class="button">Stop Charging</button>
-<button type="button" id="StartChargingButton" value="Wake" class="button">Start Charging</button>
 <br />
-<button type="button" id="Unlock" value="Wake" class="button">Unlock</button>
-<button type="button" id="Lock" value="Wake" class="button">Lock</button>
-<button type="button" id="Honk" value="Wake" class="button">Honk</button>
-<br />
+@*<button type="button" id="WakeButton" class="btn btn-primary">Wake</button>*@
+<p class="lead">Storage
+<button type="button" id="Trunk" class="btn btn-primary">Trunk</button>
+<button type="button" id="Frunk" class="btn btn-primary">Frunk</button>
+</p>
+<p class="lead">
+    Charging
+    <br />
+    <button type="button" id="OpenPort" class="btn btn-primary">Open Charge Port</button>
+    <button type="button" id="ClosePort" class="btn btn-primary">Close Charge Port</button>
+    <p>
+    <button type="button" id="StopChargingButton" class="btn btn-primary">Stop Charging</button>
+    <button type="button" id="StartChargingButton" class="btn btn-primary">Start Charging</button>
+</p>
+<p class="lead">Security
+<button type="button" id="Unlock" class="btn btn-primary">Unlock</button>
+<button type="button" id="Lock" class="btn btn-primary">Lock</button>
+<button type="button" id="Honk" class="btn btn-primary">Honk</button>
+</p>
 <a href="@Url.Action("Contact","Home")">Donate</a>
 @*<div id="myCarousel" class="carousel slide" data-ride="carousel" data-interval="6000">
         <ol class="carousel-indicators">
