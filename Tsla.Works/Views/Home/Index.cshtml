@@ -4,50 +4,37 @@
 }
 
 @section scripts {
-    <script type="text/javascript">
+<script type="text/javascript">
 
         $(document).ready(function () {
             $('#WakeButton').click(function () {
-                waitingDialog.show('Waking Tesla...');
-                debugger;
-                data = { id: $("#vehicles option:selected").val()};
-
-                AjaxCall('@Url.Action("Wake", "Home")', data, 'POST', CommandWaiting);
+                Command('Waking...', '@Url.Action("Wake", "Home")');
             });
 
             $('#StopChargingButton').click(function () {
-                waitingDialog.show('Stopping Charging...');
-                debugger;
-                data = { id: $("#vehicles option:selected").val()};
-
-                AjaxCall('@Url.Action("StopCharging", "Home")', data, 'POST', CommandWaiting);
+                Command('Stop Charging...', '@Url.Action("StopCharging", "Home")');
             });
 
             $('#StartChargingButton').click(function () {
-                waitingDialog.show('Starting to Charge...');
-                debugger;
-                data = { id: $("#vehicles option:selected").val()};
-
-                AjaxCall('@Url.Action("StartCharging", "Home")', data, 'POST', CommandWaiting);
+                Command('Begin Charging...', '@Url.Action("StartCharging", "Home")');
             });
 
             $('#Unlock').click(function () {
-                waitingDialog.show('Unlocking...');
-                debugger;
-                data = { id: $("#vehicles option:selected").val()};
-
-                AjaxCall('@Url.Action("Unlock", "Home")', data, 'POST', CommandWaiting);
+                Command('Unlocking...', '@Url.Action("Unlock", "Home")');
             });
 
             $('#Lock').click(function () {
-                waitingDialog.show('Locking...');
-                debugger;
-                data = { id: $("#vehicles option:selected").val()};
-
-                AjaxCall('@Url.Action("Lock", "Home")', data, 'POST', CommandWaiting);
+                Command('Locking...', '@Url.Action("Lock", "Home")');
             });
         });
 
+        function Command(dialog, command) {
+            waitingDialog.show(dialog);
+
+            data = { id: $("#vehicles option:selected").val()};
+
+            AjaxCall(command, data, 'POST', CommandWaiting);
+        }
 
         function CommandWaiting(data) {
             debugger;
@@ -91,7 +78,7 @@
                 }
             });
         };
-    </script>
+</script>
 }
 
 <div class="row">

@@ -12,16 +12,42 @@ namespace Tsla.Works.Controllers
 {
     public class HomeController : Controller
     {
+        private TeslaOAuthResponse authResponse;
+        TeslaOAuthResponse AuthResponse {
+            get
+            {
+                if (authResponse == null)
+                {
+                    authResponse =  CookieCheck();
+                }
+
+                return authResponse;
+            }
+        }
+
+        public TeslaCommands teslaCommands;
+        TeslaCommands TeslaCommands {
+            get
+            {
+                if (teslaCommands == null)
+                {
+                    teslaCommands = new TeslaCommands
+                    {
+                        Token = AuthResponse.access_token
+                    };
+                }
+
+                return teslaCommands;
+            }
+        }
+
         public IActionResult Index()
         {
             Vehicles vehicles = null;
             
-            if (Request.Cookies["tsla.works"] != null)
+            if (AuthResponse != null)
             {
-                string cookievalue = Request.Cookies["tsla.works"];
-                TeslaOAuthResponse response = JsonConvert.DeserializeObject<TeslaOAuthResponse>(cookievalue);
-
-                vehicles = Task.Run<Vehicles>(async () => await TeslaCommands.GetVehicles(response.access_token)).Result;
+                vehicles = Task.Run<Vehicles>(async () => await TeslaCommands.GetVehicles()).Result;
             }
             else
             {
@@ -36,11 +62,11 @@ namespace Tsla.Works.Controllers
 
         private TeslaOAuthResponse CookieCheck()
         {
-            TeslaOAuthResponse authResponse = null;
             if (Request.Cookies["tsla.works"] != null)
             {
                 string cookievalue = Request.Cookies["tsla.works"];
                 authResponse = JsonConvert.DeserializeObject<TeslaOAuthResponse>(cookievalue);
+                TeslaCommands.Token = authResponse.access_token;
             }
             else
             {
@@ -53,9 +79,7 @@ namespace Tsla.Works.Controllers
         [HttpPost]
         public JsonResult Wake(string id)
         {
-            TeslaOAuthResponse authResponse = CookieCheck();
-
-            bool result = Task.Run<bool>(async () => await TeslaCommands.Wake(authResponse.access_token, id)).Result;
+            bool result = Task.Run<bool>(async () => await TeslaCommands.Wake(id)).Result;
 
             JsonResult json = new JsonResult(result);
 
@@ -65,9 +89,7 @@ namespace Tsla.Works.Controllers
         [HttpPost]
         public JsonResult StopCharging(string id)
         {
-            TeslaOAuthResponse authResponse = CookieCheck();
-
-            bool result = Task.Run<bool>(async () => await TeslaCommands.StopCharging(authResponse.access_token, id)).Result;
+            bool result = Task.Run<bool>(async () => await TeslaCommands.StopCharging(id)).Result;
 
             JsonResult json = new JsonResult(result);
 
@@ -77,9 +99,7 @@ namespace Tsla.Works.Controllers
         [HttpPost]
         public JsonResult StartCharging(string id)
         {
-            TeslaOAuthResponse authResponse = CookieCheck();
-
-            bool result = Task.Run<bool>(async () => await TeslaCommands.StartCharging(authResponse.access_token, id)).Result;
+            bool result = Task.Run<bool>(async () => await TeslaCommands.StartCharging(id)).Result;
 
             JsonResult json = new JsonResult(result);
 
@@ -89,9 +109,7 @@ namespace Tsla.Works.Controllers
         [HttpPost]
         public JsonResult Unlock(string id)
         {
-            TeslaOAuthResponse authResponse = CookieCheck();
-
-            bool result = Task.Run<bool>(async () => await TeslaCommands.Unlock(authResponse.access_token, id)).Result;
+            bool result = Task.Run<bool>(async () => await TeslaCommands.Unlock(id)).Result;
 
             JsonResult json = new JsonResult(result);
 
@@ -101,9 +119,7 @@ namespace Tsla.Works.Controllers
         [HttpPost]
         public JsonResult Lock(string id)
         {
-            TeslaOAuthResponse authResponse = CookieCheck();
-
-            bool result = Task.Run<bool>(async () => await TeslaCommands.Lock(authResponse.access_token, id)).Result;
+            bool result = Task.Run<bool>(async () => await TeslaCommands.Lock(id)).Result;
 
             JsonResult json = new JsonResult(result);
 
@@ -113,9 +129,7 @@ namespace Tsla.Works.Controllers
         [HttpPost]
         public JsonResult IsAwake(string id)
         {
-            TeslaOAuthResponse authResponse = CookieCheck();
-
-            bool result = Task.Run<bool>(async () => await TeslaCommands.IsAwake(authResponse.access_token, id)).Result;
+            bool result = Task.Run<bool>(async () => await TeslaCommands.IsAwake(id)).Result;
 
             JsonResult json = new JsonResult(result);
 

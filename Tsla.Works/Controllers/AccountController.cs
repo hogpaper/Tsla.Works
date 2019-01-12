@@ -129,7 +129,7 @@ namespace Tsla.Works.Controllers
             ViewData["ReturnUrl"] = returnUrl;
             if (ModelState.IsValid)
             {
-                var result = await TeslaCommands.Authenticate(model.Email, model.Password);// Task.Run<TeslaOAuthResponse>(async () => await Authenticate()).Result;
+                var result = await new TeslaCommands().Authenticate(model.Email, model.Password);// Task.Run<TeslaOAuthResponse>(async () => await Authenticate()).Result;
 
                 // This doesn't count login failures towards account lockout
                 // To enable password failures to trigger account lockout, set lockoutOnFailure: true
