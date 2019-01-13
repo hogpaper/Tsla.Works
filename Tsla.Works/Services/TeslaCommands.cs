@@ -14,7 +14,18 @@ namespace Tsla.Works.Services
     public class TeslaCommands
     {
         private HttpClient client = new HttpClient();
-        public IConfigurationRoot Configuration { get; set; }
+        IConfigurationRoot configuration;
+        public IConfigurationRoot Configuration
+        {
+            get
+            {
+                if (configuration == null)
+                {
+                    GetConfig();
+                }
+                return configuration;
+            }
+        }
         private string Id;
         public string Token { get; set; }
 
@@ -146,6 +157,17 @@ namespace Tsla.Works.Services
         public async Task<bool> IsAwake(string id)
         {
             bool awake = false;
+
+            TeslaState state = await GetState(id);
+
+            awake = state.response.state == "online" ? true : false;
+
+            return awake;
+        }
+
+        public async Task<TeslaState> GetState(string id)
+        {
+            TeslaState state = null;
             string url = string.Format("https://owner-api.teslamotors.com/api/1/vehicles/{0}/data", id);
             Uri uri = new Uri(url);
 
@@ -154,10 +176,10 @@ namespace Tsla.Works.Services
             HttpResponseMessage response = await client.GetAsync(uri);
             if (response.IsSuccessStatusCode)
             {
-                TeslaState mobile = await response.Content.ReadAsAsync<TeslaState>().ConfigureAwait(false);
-                awake = mobile.response.state == "online" ? true : false;
+                state = await response.Content.ReadAsAsync<TeslaState>().ConfigureAwait(false);
             }
-            return awake;
+
+            return state;
         }
 
         public async Task<bool> MobileEnabled(string id)
@@ -184,11 +206,7 @@ namespace Tsla.Works.Services
             try
             {
                 Uri url = new Uri("https://owner-api.teslamotors.com/oauth/token?grant_type=password");
-
-                var builder = new ConfigurationBuilder().SetBasePath(Directory.GetCurrentDirectory()).AddJsonFile("appsettings.json");
-
-                Configuration = builder.Build();
-
+                
                 string client_id = Configuration.GetSection("TeslaSettings:client_id").Value;
                 string client_secret = Configuration.GetSection("TeslaSettings:client_secret").Value;
 
@@ -217,6 +235,13 @@ namespace Tsla.Works.Services
             }
 
             return teslaOauthResponse;
+        }
+
+        private void GetConfig()
+        {
+            var builder = new ConfigurationBuilder().SetBasePath(Directory.GetCurrentDirectory()).AddJsonFile("appsettings.json");
+
+            configuration = builder.Build();
         }
 
         private void SetupHeaders()

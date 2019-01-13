@@ -57,6 +57,8 @@ namespace Tsla.Works.Controllers
                 //Response.Cookies.Append("tsla.works", cookie);
             }            
 
+            ViewBag.MapApi = TeslaCommands.Configuration.GetSection("TeslaSettings:google_maps_api_key").Value;
+
             return View(vehicles);
         }
 
@@ -182,6 +184,22 @@ namespace Tsla.Works.Controllers
             bool result = Task.Run<bool>(async () => await TeslaCommands.IsAwake(id)).Result;
 
             JsonResult json = new JsonResult(result);
+
+            return json;
+        }
+
+        [HttpPost]
+        public JsonResult GetState(string id)
+        {
+            TeslaState result = Task.Run<TeslaState>(async () => await TeslaCommands.GetState(id)).Result;
+
+            TeslaLocation location = new TeslaLocation()
+            {
+                Latitude = result.response.drive_state.latitude,
+                Longitude = result.response.drive_state.longitude
+            };
+
+            JsonResult json = new JsonResult(location);
 
             return json;
         }
