@@ -104,6 +104,15 @@ namespace Tsla.Works.Services
             return await Command(url);
         }
 
+        public async Task<bool> FlashLight(string id)
+        {
+            Id = id;
+
+            string url = string.Format("https://owner-api.teslamotors.com/api/1/vehicles/{0}/command/flash_lights", Id);
+
+            return await Command(url);
+        }
+
         public async Task<bool> OpenChargePort(string id)
         {
             Id = id;

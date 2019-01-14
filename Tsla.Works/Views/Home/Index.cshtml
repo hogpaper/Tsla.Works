@@ -32,6 +32,10 @@
                 Command('Honk...', '@Url.Action("Honk", "Home")');
             });
 
+            $('#Flash').click(function () {
+                Command('Honk...', '@Url.Action("FlashLights", "Home")');
+            });
+
             $('#Trunk').click(function () {
                 Command('Opening Rear Trunk...', '@Url.Action("Trunk", "Home")');
             });
@@ -205,6 +209,7 @@
     <button type="button" id="Unlock" class="btn btn-primary">Unlock</button>
     <button type="button" id="Lock" class="btn btn-primary">Lock</button>
     <button type="button" id="Honk" class="btn btn-primary">Honk</button>
+    <button type="button" id="Flash" class="btn btn-primary">Flash Lights</button>
 </p>
 <p>
     <label><input type="checkbox" style="font-weight: normal" name="Track" id="Track" value="Track">Track</label>&nbsp;<label id="VehicleName"></label> every 

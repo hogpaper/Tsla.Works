@@ -91,6 +91,16 @@ namespace Tsla.Works.Controllers
         }
 
         [HttpPost]
+        public JsonResult FlashLights(string id)
+        {
+            bool result = Task.Run<bool>(async () => await TeslaCommands.FlashLight(id)).Result;
+
+            JsonResult json = new JsonResult(result);
+
+            return json;
+        }
+
+        [HttpPost]
         public JsonResult StopCharging(string id)
         {
             bool result = Task.Run<bool>(async () => await TeslaCommands.StopCharging(id)).Result;
