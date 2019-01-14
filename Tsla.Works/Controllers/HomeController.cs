@@ -205,6 +205,8 @@ namespace Tsla.Works.Controllers
         {
             TeslaLocation location = null;
 
+            Wake(id);
+
             TeslaState result = Task.Run<TeslaState>(async () => await TeslaCommands.GetState(id)).Result;
 
             if (result != null)

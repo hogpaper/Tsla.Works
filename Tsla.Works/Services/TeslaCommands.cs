@@ -176,6 +176,7 @@ namespace Tsla.Works.Services
 
         public async Task<TeslaState> GetState(string id)
         {
+            //DONT USE WAKE COMMAND HERE
             TeslaState state = null;
             string url = string.Format("https://owner-api.teslamotors.com/api/1/vehicles/{0}/data", id);
             Uri uri = new Uri(url);
