@@ -67,6 +67,8 @@ namespace Tsla.Works.Controllers
             if (Request.Cookies["tsla.works"] != null)
             {
                 string cookievalue = Request.Cookies["tsla.works"];
+                TeslaCommands teslaCommands = new TeslaCommands();
+                cookievalue = Encryption.Decrypt(cookievalue, teslaCommands.Configuration.GetSection("TeslaSettings:encryption_key").Value);
                 authResponse = JsonConvert.DeserializeObject<TeslaOAuthResponse>(cookievalue);
                 TeslaCommands.Token = authResponse.access_token;
             }

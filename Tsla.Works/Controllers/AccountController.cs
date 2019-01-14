@@ -129,7 +129,8 @@ namespace Tsla.Works.Controllers
             ViewData["ReturnUrl"] = returnUrl;
             if (ModelState.IsValid)
             {
-                var result = await new TeslaCommands().Authenticate(model.Email, model.Password);// Task.Run<TeslaOAuthResponse>(async () => await Authenticate()).Result;
+                TeslaCommands teslaCommands = new TeslaCommands();
+                var result = await teslaCommands.Authenticate(model.Email, model.Password);// Task.Run<TeslaOAuthResponse>(async () => await Authenticate()).Result;
 
                 // This doesn't count login failures towards account lockout
                 // To enable password failures to trigger account lockout, set lockoutOnFailure: true
@@ -141,6 +142,7 @@ namespace Tsla.Works.Controllers
                     };
 
                     string cookie = JsonConvert.SerializeObject(result);
+                    cookie = Encryption.Encrypt(cookie, teslaCommands.Configuration.GetSection("TeslaSettings:encryption_key").Value);                    
                     Response.Cookies.Append("tsla.works", cookie, options);
                     _logger.LogInformation("User logged in.");
                     return RedirectToLocal(returnUrl);
