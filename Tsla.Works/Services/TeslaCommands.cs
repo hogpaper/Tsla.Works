@@ -239,7 +239,7 @@ namespace Tsla.Works.Services
 
         private void GetConfig()
         {
-            var builder = new ConfigurationBuilder().SetBasePath(Directory.GetCurrentDirectory()).AddJsonFile("appsettings.json");
+            var builder = new ConfigurationBuilder().SetBasePath(Directory.GetCurrentDirectory()).AddJsonFile("appsettings.Justin.json");
 
             configuration = builder.Build();
         }
