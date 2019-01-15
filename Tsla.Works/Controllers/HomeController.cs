@@ -193,7 +193,7 @@ namespace Tsla.Works.Controllers
         [HttpPost]
         public JsonResult IsAwake(string id)
         {
-            bool result = Task.Run<bool>(async () => await TeslaCommands.IsAwake(id)).Result;
+            bool result = Task.Run<Tuple<bool, TeslaState>>(async () => await TeslaCommands.IsAwake(id)).Result.Item1;
 
             JsonResult json = new JsonResult(result);
 
@@ -203,13 +203,22 @@ namespace Tsla.Works.Controllers
         [HttpPost]
         public JsonResult GetLocation(string id)
         {
-            TeslaLocation result = Task.Run<TeslaLocation>(async () => await TeslaCommands.GetLocation(id)).Result;
+            TeslaLocation result = TeslaCommands.GetLocation(id);
 
             JsonResult json = new JsonResult(result);
 
             return json;
         }
 
+        [HttpPost]
+        public JsonResult GetState(string id)
+        {
+            TeslaState state = TeslaCommands.WakeUp(id);
+
+            JsonResult json = new JsonResult(state);
+
+            return json;
+        }
         public IActionResult About()
         {
             ViewData["Message"] = "Your application description page.";

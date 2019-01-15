@@ -52,7 +52,10 @@
                 Command('Closing Charge Port :) ...', '@Url.Action("CloseChargePort", "Home")');
             });
 
-            
+            $('#GetState').click(function () {
+                GetState();
+            });
+
             UpdateVehicle();
             GetLocation();
             SetTracking();
@@ -72,6 +75,21 @@
                     GetLocation();
                 }
             }, seconds);
+        }
+
+        function GetState() {
+            data = { id: $("#vehicles option:selected").val() };
+            command = '@Url.Action("GetState", "Home")';
+            AjaxCall(command, data, 'POST', loadState);
+        }
+
+        function loadState(data) {
+            debugger;
+
+            for (var propertyName in data.response) {
+                var div = $('#stateDiv').append(propertyName + ':' + data.response[propertyName]);
+                
+            }
         }
 
         function GetLocation() {
@@ -209,8 +227,9 @@
     <button type="button" id="Honk" class="btn btn-primary">Honk</button>
     <button type="button" id="Flash" class="btn btn-primary">Flash Lights</button>
 </p>
-<div>
-
+<div id="stateDiv">
+    State:
+    <button type="button" id="GetState" class="btn btn-primary">Get State</button>
 </div>
 <p>
     <label><input type="checkbox" style="font-weight: normal" name="Track" id="Track" value="Track">Track</label>&nbsp;<label id="VehicleName"></label> every 
