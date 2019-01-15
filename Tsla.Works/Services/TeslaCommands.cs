@@ -153,28 +153,66 @@ namespace Tsla.Works.Services
             return await ApiPost(url, httpContent);
         }
 
-        private void WakeUp(string id)
+        public TeslaState WakeUp(string id)
         {
             SetupHeaders();
             Task.Run(async () => await Wake(id));
-            while (!Task.Run<bool>(async () => await IsAwake(id)).Result)
+            Tuple<bool, TeslaState> result = Task.Run<Tuple<bool, TeslaState>>(async () => await IsAwake(id)).Result;
+            while (!result.Item1)
             {
                 
             }
+
+            return result.Item2;
         }
 
-        public async Task<bool> IsAwake(string id)
+        public async Task<Tuple<bool, TeslaState>> IsAwake(string id)
         {
             bool awake = false;
 
             TeslaState state = await GetState(id);
 
             awake = state.response.state == "online" ? true : false;
+            Tuple<bool, TeslaState> tuple = Tuple.Create(awake, state);
 
-            return awake;
+            return tuple;
         }
 
-        public async Task<TeslaState> GetState(string id)
+        public async Task<TeslaLocation> GetLocation(string id)
+        {
+            TeslaLocation teslaLocation = null;
+
+            WakeUp(id);
+
+            string url = string.Format("https://owner-api.teslamotors.com/api/1/vehicles/{0}/data", id);
+
+            Uri uri = new Uri(url);
+
+            SetupHeaders();
+
+            HttpResponseMessage response = await client.GetAsync(uri);
+
+            if (response.IsSuccessStatusCode)
+            {
+                TeslaState teslaState = await response.Content.ReadAsAsync<TeslaState>().ConfigureAwait(false);
+
+                teslaLocation = new TeslaLocation()
+                {
+                    Latitude = teslaState.response.drive_state.latitude,
+                    Longitude = teslaState.response.drive_state.longitude
+                };
+
+                response = (HttpResponseMessage)null;
+            }
+            else
+            {
+                string msg = string.Format("Uri: {0} \n\n Status Code: {1}\n", (object)response.RequestMessage.RequestUri, (object)response.StatusCode);
+                throw new HttpRequestException(msg);
+            }
+
+            return teslaLocation;
+        }
+        private async Task<TeslaState> GetState(string id)
         {
             //DONT USE WAKE COMMAND HERE
             TeslaState state = null;

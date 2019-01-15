@@ -33,7 +33,7 @@
             });
 
             $('#Flash').click(function () {
-                Command('Honk...', '@Url.Action("FlashLights", "Home")');
+                Command('Flashing Lights...', '@Url.Action("FlashLights", "Home")');
             });
 
             $('#Trunk').click(function () {
@@ -76,7 +76,7 @@
 
         function GetLocation() {
             data = { id: $("#vehicles option:selected").val() };
-            command = '@Url.Action("GetState", "Home")';
+            command = '@Url.Action("GetLocation", "Home")';
             AjaxCall(command, data, 'POST', initMap);
         }
 
@@ -197,10 +197,8 @@
 </p>
 <p class="lead">
     Charging
-    <br />
     <button type="button" id="OpenPort" class="btn btn-primary">Open Charge Port</button>
     <button type="button" id="ClosePort" class="btn btn-primary">Close Charge Port</button>
-<p>
     <button type="button" id="StopChargingButton" class="btn btn-primary">Stop Charging</button>
     <button type="button" id="StartChargingButton" class="btn btn-primary">Start Charging</button>
 </p>
@@ -211,6 +209,9 @@
     <button type="button" id="Honk" class="btn btn-primary">Honk</button>
     <button type="button" id="Flash" class="btn btn-primary">Flash Lights</button>
 </p>
+<div>
+
+</div>
 <p>
     <label><input type="checkbox" style="font-weight: normal" name="Track" id="Track" value="Track">Track</label>&nbsp;<label id="VehicleName"></label> every 
     <input type="number" id="TrackSecond" value="120" onchange="SetTracking()" /> seconds

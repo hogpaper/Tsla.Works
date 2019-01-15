@@ -201,24 +201,11 @@ namespace Tsla.Works.Controllers
         }
 
         [HttpPost]
-        public JsonResult GetState(string id)
+        public JsonResult GetLocation(string id)
         {
-            TeslaLocation location = null;
+            TeslaLocation result = Task.Run<TeslaLocation>(async () => await TeslaCommands.GetLocation(id)).Result;
 
-            Wake(id);
-
-            TeslaState result = Task.Run<TeslaState>(async () => await TeslaCommands.GetState(id)).Result;
-
-            if (result != null)
-            {
-                location = new TeslaLocation()
-                {
-                    Latitude = result.response.drive_state.latitude,
-                    Longitude = result.response.drive_state.longitude
-                };
-            }
-
-            JsonResult json = new JsonResult(location);
+            JsonResult json = new JsonResult(result);
 
             return json;
         }
