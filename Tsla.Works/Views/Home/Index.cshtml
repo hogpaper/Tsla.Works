@@ -84,11 +84,20 @@
         }
 
         function loadState(data) {
+            
+
+            $('#Vin').text(data.response['vin']);
+            $('#State').text(data.response['state']);
+            $('#Calendar').text(data.response['calendar_enabled']);
+
+            //drive state
+            $('#Heading').text(data.response["drive_state"]["heading"]);
+            $('#Latitude').text(data.response["drive_state"]["latitude"]);
+            $('#Longitude').text(data.response["drive_state"]["longitude"]);
+            $('#Speed').text(data.response["drive_state"]["speed"]);
             debugger;
-
-
-
             for (var propertyName in data.response) {
+                
                 $('<div/>', {
                     'class': 'col-md-2', html: '<h4>' + propertyName + '  <span class="label label-default">' + data.response[propertyName] + '</span></h4>'
                 }).hide().appendTo('#container').slideDown('slow');
@@ -240,6 +249,89 @@
 </div>
 <div class="row" id="container">
     
+</div>
+<div class="row">
+    <div class="col-md-2">
+        <h4>
+            Vin:
+            <span class="label label-default" id="Vin"></span>
+        </h4>
+    </div>
+    <div class="col-md-2">
+        <h4>
+            Status:
+            <span class="label label-default" id="State"></span>
+        </h4>
+    </div>
+    <div class="col-md-2">
+        <h4>
+            Calendar Enabled:
+            <span class="label label-default" id="Calendar"></span>
+        </h4>
+    </div>
+    <!--drive state-->
+    <div class="col-md-2">
+        <h4>
+            Heading:
+            <span class="label label-default" id="Heading"></span>
+        </h4>
+    </div>
+    <div class="col-md-2">
+        <h4>
+            Latitude:
+            <span class="label label-default" id="Latitude"></span>
+        </h4>
+    </div>
+    <div class="col-md-2">
+        <h4>
+            Longitude:
+            <span class="label label-default" id="Longitude"></span>
+        </h4>
+    </div>
+    <div class="col-md-2">
+        <h4>
+            Speed:
+            <span class="label label-default" id="Speed"></span>
+        </h4>
+    </div>
+    <!--GUI Settings-->
+    <div class="col-md-2">
+        <h4>
+            24 Hour Time:
+            <span class="label label-default" id="HourTime"></span>
+        </h4>
+    </div>
+    <div class="col-md-2">
+        <h4>
+            Charge Units:
+            <span class="label label-default" id="ChargeUnits"></span>
+        </h4>
+    </div>
+    <div class="col-md-2">
+        <h4>
+            Distant Units:
+            <span class="label label-default" id="DistanceUnits"></span>
+        </h4>
+    </div>
+    <div class="col-md-2">
+        <h4>
+            Range Display:
+            <span class="label label-default" id="RangeDisplay"></span>
+        </h4>
+    </div>
+    <div class="col-md-2">
+        <h4>
+            Temperature Units:
+            <span class="label label-default" id="TempUnits"></span>
+        </h4>
+    </div>
+    <!--Vehicle State-->
+    <div class="col-md-2">
+        <h4>
+            Temperature Units:
+            <span class="label label-default" id="TempUnits"></span>
+        </h4>
+    </div>
 </div>
 <p>
     <label><input type="checkbox" style="font-weight: normal" name="Track" id="Track" value="Track">Track</label>&nbsp;<label id="VehicleName"></label> every 

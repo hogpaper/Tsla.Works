@@ -29,15 +29,14 @@ namespace Tsla.Works.Services
         private string Id;
         public string Token { get; set; }
 
+        #region Get Requests
         public async Task<Vehicles> GetVehicles()
         {
             Vehicles vehicles = null;
 
-            Uri url = new Uri("https://owner-api.teslamotors.com/api/1/vehicles/");
+            string url = "https://owner-api.teslamotors.com/api/1/vehicles/";
 
-            SetupHeaders();
-
-            HttpResponseMessage response = await client.GetAsync(url);
+            HttpResponseMessage response = await ApiGet(url);
 
             if (response.IsSuccessStatusCode)
             {
@@ -53,114 +52,17 @@ namespace Tsla.Works.Services
             return vehicles;
         }
 
-        public async Task<bool> Wake(string id)
-        {
-            string url = string.Format("https://owner-api.teslamotors.com/api/1/vehicles/{0}/wake_up", id);
-            return await ApiPost(url);
-        }
-
-        public async Task<bool> StopCharging(string id)
-        {
-            WakeUp(id);
-
-            string url = string.Format("https://owner-api.teslamotors.com/api/1/vehicles/{0}/command/charge_stop", id);
-            
-            return await ApiPost(url);
-        }
-
-        public async Task<bool> StartCharging(string id)
-        {
-            WakeUp(id);
-
-            string url = string.Format("https://owner-api.teslamotors.com/api/1/vehicles/{0}/command/charge_start", id);
-
-            return await ApiPost(url);
-        }
-
-        public async Task<bool> Unlock(string id)
-        {
-            WakeUp(id);
-
-            string url = string.Format("https://owner-api.teslamotors.com/api/1/vehicles/{0}/command/door_unlock", id);
-
-            return await ApiPost(url);
-        }
-
-        public async Task<bool> Lock(string id)
-        {
-            Id = id;
-
-            string url = string.Format("https://owner-api.teslamotors.com/api/1/vehicles/{0}/command/door_lock", Id);
-
-            return await Command(url);
-        }
-
-        public async Task<bool> Honk(string id)
-        {
-            Id = id;
-
-            string url = string.Format("https://owner-api.teslamotors.com/api/1/vehicles/{0}/command/honk_horn", Id);
-
-            return await Command(url);
-        }
-
-        public async Task<bool> FlashLight(string id)
-        {
-            Id = id;
-
-            string url = string.Format("https://owner-api.teslamotors.com/api/1/vehicles/{0}/command/flash_lights", Id);
-
-            return await Command(url);
-        }
-
-        public async Task<bool> OpenChargePort(string id)
-        {
-            Id = id;
-
-            string url = string.Format("https://owner-api.teslamotors.com/api/1/vehicles/{0}/command/charge_port_door_open", Id);
-
-            return await Command(url);
-        }
-
-        public async Task<bool> CloseChargePort(string id)
-        {
-            Id = id;
-
-            string url = string.Format("https://owner-api.teslamotors.com/api/1/vehicles/{0}/command/charge_port_door_close", Id);
-
-            return await Command(url);
-        }
-
-        public async Task<bool> OpenTrunk(string id, string which_trunk)
-        {
-            Id = id;
-
-            TrunkApi trunkApi = new TrunkApi()
-            {
-                which_trunk = which_trunk
-            };
-
-            StringContent stringContent = new StringContent(JsonConvert.SerializeObject((object)trunkApi), Encoding.UTF8, "application/json");
-
-            string url = string.Format("https://owner-api.teslamotors.com/api/1/vehicles/{0}/command/actuate_trunk", Id);
-
-            return await Command(url, stringContent);
-        }
-        public async Task<bool> Command(string url, HttpContent httpContent=null)
-        {
-            WakeUp(Id);
-
-            return await ApiPost(url, httpContent);
-        }
-
         public TeslaState WakeUp(string id)
         {
-            SetupHeaders();
-            Task.Run(async () => await Wake(id));
-            SetupHeaders(); //I don't think we need this here?
+            bool wakeSent = false;
             Tuple<bool, TeslaState> result = Task.Run<Tuple<bool, TeslaState>>(async () => await IsAwake(id)).Result;
             while (!result.Item1)
             {
+                if (!wakeSent)
+                {
+                    Task.Run(async () => await Wake(id));
+                }
+
                 result = Task.Run<Tuple<bool, TeslaState>>(async () => await IsAwake(id)).Result;
             }
 
@@ -193,12 +95,12 @@ namespace Tsla.Works.Services
             TeslaLocation teslaLocation = null;
 
             TeslaState teslaState = WakeUp(id);
-            
+
             teslaLocation = new TeslaLocation()
             {
                 Latitude = teslaState.response.drive_state.latitude,
                 Longitude = teslaState.response.drive_state.longitude
-            };                
+            };
 
             return teslaLocation;
         }
@@ -207,11 +109,8 @@ namespace Tsla.Works.Services
             //DONT USE WAKE COMMAND HERE
             TeslaState state = null;
             string url = string.Format("https://owner-api.teslamotors.com/api/1/vehicles/{0}/data", id);
-            Uri uri = new Uri(url);
-
-            SetupHeaders();
-
-            HttpResponseMessage response = await client.GetAsync(uri);
+            
+            HttpResponseMessage response = await ApiGet(url);
             if (response.IsSuccessStatusCode)
             {
                 state = await response.Content.ReadAsAsync<TeslaState>().ConfigureAwait(false);
@@ -224,11 +123,8 @@ namespace Tsla.Works.Services
         {
             bool awake = false;
             string url = string.Format("https://owner-api.teslamotors.com/api/1/vehicles/{0}/mobile_enabled", id);
-            Uri uri = new Uri(url);
 
-            SetupHeaders();
-
-            HttpResponseMessage response = await client.GetAsync(uri);
+            HttpResponseMessage response = await ApiGet(url);
             if (response.IsSuccessStatusCode)
             {
                 MobileEnabled mobile = await response.Content.ReadAsAsync<MobileEnabled>().ConfigureAwait(false);
@@ -238,13 +134,144 @@ namespace Tsla.Works.Services
             return awake;
         }
 
+        private async Task<HttpResponseMessage> ApiGet(string url)
+        {
+            SetupHeaders();
+
+            Uri uri = new Uri(url);
+            HttpResponseMessage response = await client.GetAsync(url);
+
+            return response;
+        }
+        #endregion //Get Requests
+
+        #region Post Requests
+        public async Task<bool> Wake(string id)
+        {
+            string url = string.Format("https://owner-api.teslamotors.com/api/1/vehicles/{0}/wake_up", id);
+            return await PostCommand(url);
+        }
+
+        public async Task<bool> StopCharging(string id)
+        {
+            string url = string.Format("https://owner-api.teslamotors.com/api/1/vehicles/{0}/command/charge_stop", id);
+            
+            return await PostCommandAwake(url);
+        }
+
+        public async Task<bool> StartCharging(string id)
+        {
+            string url = string.Format("https://owner-api.teslamotors.com/api/1/vehicles/{0}/command/charge_start", id);
+
+            return await PostCommandAwake(url);
+        }
+
+        public async Task<bool> Unlock(string id)
+        {
+            string url = string.Format("https://owner-api.teslamotors.com/api/1/vehicles/{0}/command/door_unlock", id);
+
+            return await PostCommandAwake(url);
+        }
+
+        public async Task<bool> Lock(string id)
+        {
+            Id = id;
+
+            string url = string.Format("https://owner-api.teslamotors.com/api/1/vehicles/{0}/command/door_lock", Id);
+
+            return await PostCommandAwake(url);
+        }
+
+        public async Task<bool> Honk(string id)
+        {
+            Id = id;
+
+            string url = string.Format("https://owner-api.teslamotors.com/api/1/vehicles/{0}/command/honk_horn", Id);
+
+            return await PostCommandAwake(url);
+        }
+
+        public async Task<bool> FlashLight(string id)
+        {
+            Id = id;
+
+            string url = string.Format("https://owner-api.teslamotors.com/api/1/vehicles/{0}/command/flash_lights", Id);
+
+            return await PostCommandAwake(url);
+        }
+
+        public async Task<bool> OpenChargePort(string id)
+        {
+            Id = id;
+
+            string url = string.Format("https://owner-api.teslamotors.com/api/1/vehicles/{0}/command/charge_port_door_open", Id);
+
+            return await PostCommandAwake(url);
+        }
+
+        public async Task<bool> CloseChargePort(string id)
+        {
+            Id = id;
+
+            string url = string.Format("https://owner-api.teslamotors.com/api/1/vehicles/{0}/command/charge_port_door_close", Id);
+
+            return await PostCommandAwake(url);
+        }
+
+        public async Task<bool> OpenTrunk(string id, string which_trunk)
+        {
+            Id = id;
+
+            TrunkApi trunkApi = new TrunkApi()
+            {
+                which_trunk = which_trunk
+            };
+
+            StringContent stringContent = new StringContent(JsonConvert.SerializeObject((object)trunkApi), Encoding.UTF8, "application/json");
+
+            string url = string.Format("https://owner-api.teslamotors.com/api/1/vehicles/{0}/command/actuate_trunk", Id);
+
+            return await PostCommandAwake(url, stringContent);
+        }
+
+        public async Task<bool> PostCommandAwake(string url , HttpContent httpContent=null)
+        {
+            WakeUp(Id);
+
+            return await PostCommand(url, httpContent);
+        }
+
+        public async Task<bool> PostCommand(string url, HttpContent httpContent=null)
+        {
+            HttpResponseMessage httpResponse = await ApiPost(url, httpContent);
+
+            bool success = false;
+
+            if (httpResponse.IsSuccessStatusCode)
+            {
+                success = true;
+            }
+
+            return success;
+        }
+
+        private async Task<HttpResponseMessage> ApiPost(string url, HttpContent httpContent = null)
+        {
+            SetupHeaders();
+
+            Uri uri = new Uri(url);
+            HttpResponseMessage response = await client.PostAsync(uri, httpContent);
+
+            return response;
+        }
+
         public async Task<TeslaOAuthResponse> Authenticate(string email, string pwd)
         {
             TeslaOAuthResponse teslaOauthResponse = null;
             try
             {
-                Uri url = new Uri("https://owner-api.teslamotors.com/oauth/token?grant_type=password");
-                
+                string url = "https://owner-api.teslamotors.com/oauth/token?grant_type=password";
+
                 string client_id = Configuration.GetSection("TeslaSettings:client_id").Value;
                 string client_secret = Configuration.GetSection("TeslaSettings:client_secret").Value;
 
@@ -257,10 +284,8 @@ namespace Tsla.Works.Services
                     password = pwd
                 };
 
-                SetupHeaders();
-
                 StringContent stringContent = new StringContent(JsonConvert.SerializeObject((object)oAuth), Encoding.UTF8, "application/json");
-                HttpResponseMessage response = await client.PostAsync(url, stringContent);
+                HttpResponseMessage response = await ApiPost(url, stringContent);
 
                 if (response.IsSuccessStatusCode)
                 {
@@ -274,6 +299,7 @@ namespace Tsla.Works.Services
 
             return teslaOauthResponse;
         }
+        #endregion //Post Requests
 
         private void GetConfig()
         {
@@ -294,20 +320,6 @@ namespace Tsla.Works.Services
             client.DefaultRequestHeaders.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:64.0) Gecko/20100101 Firefox/64.0");
         }
 
-        private async Task<bool> ApiPost(string url, HttpContent httpContent = null)
-        {
-            SetupHeaders();
-
-            Uri uri = new Uri(url);
-
-            bool success = false;
-            HttpResponseMessage response = await client.PostAsync(uri, httpContent);
-            if (response.IsSuccessStatusCode)
-            {
-                success = true;
-            }
-
-            return success;
-        }
+        
     }
 }
