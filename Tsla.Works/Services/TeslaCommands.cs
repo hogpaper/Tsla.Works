@@ -157,6 +157,7 @@ namespace Tsla.Works.Services
         {
             SetupHeaders();
             Task.Run(async () => await Wake(id));
+            SetupHeaders(); //I don't think we need this here?
             Tuple<bool, TeslaState> result = Task.Run<Tuple<bool, TeslaState>>(async () => await IsAwake(id)).Result;
             while (!result.Item1)
             {
@@ -175,6 +176,12 @@ namespace Tsla.Works.Services
             if (state != null)
             {
                 awake = state.response.state == "online" ? true : false;
+
+            }
+            else
+            {
+                TimeSpan timeSpan = new TimeSpan(0, 0, 0, 5);
+                await Task.Delay(timeSpan);
             }
             Tuple<bool, TeslaState> tuple = Tuple.Create(awake, state);
 
@@ -284,7 +291,7 @@ namespace Tsla.Works.Services
                 client.DefaultRequestHeaders.Add("Authorization", bearer);
             }
             client.DefaultRequestHeaders.Remove("User-Agent");
-            client.DefaultRequestHeaders.Add("User-Agent", "tsla.works");
+            client.DefaultRequestHeaders.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:64.0) Gecko/20100101 Firefox/64.0");
         }
 
         private async Task<bool> ApiPost(string url, HttpContent httpContent = null)
