@@ -95,6 +95,16 @@
             $('#Latitude').text(data.response["drive_state"]["latitude"]);
             $('#Longitude').text(data.response["drive_state"]["longitude"]);
             $('#Speed').text(data.response["drive_state"]["speed"]);
+
+            //Guid
+            $('#HourTime').text(data.response["gui_settings"]["gui_24_hour_time"]);
+            $('#ChargeUnits').text(data.response["gui_settings"]["gui_charge_rate_units"]);
+            $('#DistanceUnits').text(data.response["gui_settings"]["gui_distance_units"]);
+            $('#RangeDisplay').text(data.response["gui_settings"]["gui_range_display"]);
+            $('#TempUnits').text(data.response["gui_settings"]["timestamp"]);
+
+            //Climate
+            $('#TempUnits').text(data.response["gui_settings"]["timestamp"]);
             debugger;
             for (var propertyName in data.response) {
                 
@@ -297,7 +307,7 @@
     <!--GUI Settings-->
     <div class="col-md-2">
         <h4>
-            24 Hour Time:
+            Is Using 24 Hour Time?:
             <span class="label label-default" id="HourTime"></span>
         </h4>
     </div>
@@ -325,11 +335,47 @@
             <span class="label label-default" id="TempUnits"></span>
         </h4>
     </div>
-    <!--Vehicle State-->
+    <!--Climate State-->
     <div class="col-md-2">
         <h4>
-            Temperature Units:
-            <span class="label label-default" id="TempUnits"></span>
+            Actual Temperature:
+            <span class="label label-default" id="inside_temp"></span>
+        </h4>
+    </div>
+    <div class="col-md-2">
+        <h4>
+            Outside Temperature:
+            <span class="label label-default" id="outside_temp"></span>
+        </h4>
+    </div>
+    <div class="col-md-2">
+        <h4>
+            Driver Temperature:
+            <span class="label label-default" id="driver_temp_setting"></span>
+        </h4>
+    </div>
+    <div class="col-md-2">
+        <h4>
+            Passenger Temperature:
+            <span class="label label-default" id="driver_temp_setting"></span>
+        </h4>
+    </div>
+    <div class="col-md-2">
+        <h4>
+            Fan Speed:
+            <span class="label label-default" id="fan_status"></span>
+        </h4>
+    </div>
+    <div class="col-md-2">
+        <h4>
+            A/C On?:
+            <span class="label label-default" id="is_auto_conditioning_on"></span>
+        </h4>
+    </div>
+    <div class="col-md-2">
+        <h4>
+            Climate Control On?:
+            <span class="label label-default" id="is_climate_on"></span>
         </h4>
     </div>
 </div>
