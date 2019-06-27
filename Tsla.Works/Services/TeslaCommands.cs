@@ -54,6 +54,8 @@ namespace Tsla.Works.Services
 
         public TeslaState WakeUp(string id)
         {
+            Id = id;
+
             bool wakeSent = false;
             Tuple<bool, TeslaState> result = Task.Run<Tuple<bool, TeslaState>>(async () => await IsAwake(id)).Result;
             while (!result.Item1)
@@ -72,6 +74,8 @@ namespace Tsla.Works.Services
         public async Task<Tuple<bool, TeslaState>> IsAwake(string id)
         {
             bool awake = false;
+
+            Id = id;
 
             TeslaState state = await GetState(id);
 
@@ -92,6 +96,8 @@ namespace Tsla.Works.Services
 
         public TeslaLocation GetLocation(string id)
         {
+            Id = id;
+
             TeslaLocation teslaLocation = null;
 
             TeslaState teslaState = WakeUp(id);
@@ -106,6 +112,8 @@ namespace Tsla.Works.Services
         }
         private async Task<TeslaState> GetState(string id)
         {
+            Id = id;
+
             //DONT USE WAKE COMMAND HERE
             TeslaState state = null;
             string url = string.Format("https://owner-api.teslamotors.com/api/1/vehicles/{0}/data", id);
@@ -121,6 +129,8 @@ namespace Tsla.Works.Services
 
         public async Task<bool> MobileEnabled(string id)
         {
+            Id = id;
+
             bool awake = false;
             string url = string.Format("https://owner-api.teslamotors.com/api/1/vehicles/{0}/mobile_enabled", id);
 
@@ -148,12 +158,16 @@ namespace Tsla.Works.Services
         #region Post Requests
         public async Task<bool> Wake(string id)
         {
+            Id = id;
+
             string url = string.Format("https://owner-api.teslamotors.com/api/1/vehicles/{0}/wake_up", id);
             return await PostCommand(url);
         }
 
         public async Task<bool> StopCharging(string id)
         {
+            Id = id;
+
             string url = string.Format("https://owner-api.teslamotors.com/api/1/vehicles/{0}/command/charge_stop", id);
             
             return await PostCommandAwake(url);
@@ -161,6 +175,8 @@ namespace Tsla.Works.Services
 
         public async Task<bool> StartCharging(string id)
         {
+            Id = id;
+
             string url = string.Format("https://owner-api.teslamotors.com/api/1/vehicles/{0}/command/charge_start", id);
 
             return await PostCommandAwake(url);
@@ -168,6 +184,8 @@ namespace Tsla.Works.Services
 
         public async Task<bool> Unlock(string id)
         {
+            Id = id;
+
             string url = string.Format("https://owner-api.teslamotors.com/api/1/vehicles/{0}/command/door_unlock", id);
 
             return await PostCommandAwake(url);
@@ -310,7 +328,8 @@ namespace Tsla.Works.Services
 
         private void SetupHeaders()
         {
-            client.DefaultRequestHeaders.Remove("Authorization");
+            client.DefaultRequestHeaders.Clear();
+            //client.DefaultRequestHeaders.Remove("Authorization");
             if (Token != null)
             {
                 string bearer = string.Format("bearer {0}", Token);

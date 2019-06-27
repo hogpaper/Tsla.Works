@@ -138,7 +138,9 @@ namespace Tsla.Works.Controllers
                 {
                     Microsoft.AspNetCore.Http.CookieOptions options = new Microsoft.AspNetCore.Http.CookieOptions
                     {
-                        Expires = DateTimeOffset.Now.AddDays(1)
+                        Expires = DateTimeOffset.Now.AddDays(1),
+                        Secure = true,
+                        HttpOnly = true
                     };
 
                     string cookie = JsonConvert.SerializeObject(result);

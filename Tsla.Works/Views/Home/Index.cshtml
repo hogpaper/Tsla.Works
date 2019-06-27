@@ -7,7 +7,7 @@
     <script type="text/javascript">
 
         $(document).ready(function () {
-            
+
             $('#WakeButton').click(function () {
                 Command('Waking...', '@Url.Action("Wake", "Home")');
             });
@@ -60,14 +60,14 @@
             GetLocation();
             SetTracking();
 
-        });        
+        });
 
         function UpdateVehicle() {
             $('#VehicleName').text($("#vehicles option:selected").text());
         }
 
         function SetTracking() {
-            
+
             var seconds = $('#TrackSecond').val() * 1000;
 
             setInterval(function () {
@@ -84,7 +84,7 @@
         }
 
         function loadState(data) {
-            
+
 
             $('#Vin').text(data.response['vin']);
             $('#State').text(data.response['state']);
@@ -105,9 +105,9 @@
 
             //Climate
             $('#TempUnits').text(data.response["gui_settings"]["timestamp"]);
-            debugger;
+            
             for (var propertyName in data.response) {
-                
+
                 $('<div/>', {
                     'class': 'col-md-2', html: '<h4>' + propertyName + '  <span class="label label-default">' + data.response[propertyName] + '</span></h4>'
                 }).hide().appendTo('#container').slideDown('slow');
@@ -125,7 +125,7 @@
 
         var map;
         function initMap(data) {
-            
+
             var lat = data.latitude;
             var lng = data.longitude;
 
@@ -167,7 +167,15 @@
             waitingDialog.hide();
         }
 
+        AddAntiForgeryToken = function (data) {
+            data.__RequestVerificationToken = $('input[name=__RequestVerificationToken]').val();
+            return data;
+        };
+
         function AjaxCall(url, data, method, successFunction) {
+            //var pData = $.extend(data, { "CSRF-TOKEN-MOONGLADE-FORM": $('input[name="__RequestVerificationToken"]').val() });
+            data = AddAntiForgeryToken(data)
+            
             $.ajax({
                 url: url,
                 type: method,
@@ -197,27 +205,29 @@
 
     <script src="https://maps.googleapis.com/maps/api/js?key=@ViewBag.MapApi"
             async defer></script>
-    
+
 }
-    <style>
-        /* Always set the map height explicitly to define the size of the div * element that contains the map. */
+<style>
+    /* Always set the map height explicitly to define the size of the div * element that contains the map. */
 
-        #map {
-            height: 50%;
-        }
+    #map {
+        height: 50%;
+    }
 
-        /* Optional: Makes the sample page fill the window. */
+    /* Optional: Makes the sample page fill the window. */
 
-        html,
-        body {
-            height: 100%;
-            margin: 0;
-            padding: 0;
-        }
-    </style>
+    html,
+    body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+    }
+</style>
 <br />
 <br />
-<br />    
+<br />
+
+<form id="__AjaxAntiForgeryForm" action="#" method="post">@Html.AntiForgeryToken()</form>
 <div class="row">
     <div class="col-sm-3">
         <select class="form-control" id="vehicles" onchange="UpdateVehicle()">
@@ -258,7 +268,7 @@
     <button type="button" id="GetState" class="btn btn-primary">Get State</button>
 </div>
 <div class="row" id="container">
-    
+
 </div>
 <div class="row">
     <div class="col-md-2">
@@ -380,7 +390,7 @@
     </div>
 </div>
 <p>
-    <label><input type="checkbox" style="font-weight: normal" name="Track" id="Track" value="Track">Track</label>&nbsp;<label id="VehicleName"></label> every 
+    <label><input type="checkbox" style="font-weight: normal" name="Track" id="Track" value="Track">Track</label>&nbsp;<label id="VehicleName"></label> every
     <input type="number" id="TrackSecond" value="120" onchange="SetTracking()" /> seconds
 </p>
 <div id="map" style="height:50%; width:50%"></div>

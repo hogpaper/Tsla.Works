@@ -81,6 +81,7 @@ namespace Tsla.Works.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public JsonResult Wake(string id)
         {
             bool result = Task.Run<bool>(async () => await TeslaCommands.Wake(id)).Result;
@@ -91,6 +92,7 @@ namespace Tsla.Works.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public JsonResult FlashLights(string id)
         {
             bool result = Task.Run<bool>(async () => await TeslaCommands.FlashLight(id)).Result;
@@ -101,6 +103,7 @@ namespace Tsla.Works.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public JsonResult StopCharging(string id)
         {
             bool result = Task.Run<bool>(async () => await TeslaCommands.StopCharging(id)).Result;
@@ -111,6 +114,7 @@ namespace Tsla.Works.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public JsonResult StartCharging(string id)
         {
             bool result = Task.Run<bool>(async () => await TeslaCommands.StartCharging(id)).Result;
@@ -121,6 +125,7 @@ namespace Tsla.Works.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public JsonResult Unlock(string id)
         {
             bool result = Task.Run<bool>(async () => await TeslaCommands.Unlock(id)).Result;
@@ -131,6 +136,7 @@ namespace Tsla.Works.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public JsonResult Lock(string id)
         {
             bool result = Task.Run<bool>(async () => await TeslaCommands.Lock(id)).Result;
@@ -141,6 +147,7 @@ namespace Tsla.Works.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public JsonResult Honk(string id)
         {
             bool result = Task.Run<bool>(async () => await TeslaCommands.Honk(id)).Result;
@@ -151,6 +158,7 @@ namespace Tsla.Works.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public JsonResult OpenChargePort(string id)
         {
             bool result = Task.Run<bool>(async () => await TeslaCommands.OpenChargePort(id)).Result;
@@ -161,6 +169,7 @@ namespace Tsla.Works.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public JsonResult CloseChargePort(string id)
         {
             bool result = Task.Run<bool>(async () => await TeslaCommands.CloseChargePort(id)).Result;
@@ -171,6 +180,7 @@ namespace Tsla.Works.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public JsonResult Trunk(string id)
         {
             bool result = Task.Run<bool>(async () => await TeslaCommands.OpenTrunk(id, "rear")).Result;
@@ -181,6 +191,7 @@ namespace Tsla.Works.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public JsonResult Frunk(string id)
         {
             bool result = Task.Run<bool>(async () => await TeslaCommands.OpenTrunk(id, "front")).Result;
@@ -191,6 +202,7 @@ namespace Tsla.Works.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public JsonResult IsAwake(string id)
         {
             bool result = Task.Run<Tuple<bool, TeslaState>>(async () => await TeslaCommands.IsAwake(id)).Result.Item1;
@@ -201,6 +213,7 @@ namespace Tsla.Works.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public JsonResult GetLocation(string id)
         {
             TeslaLocation result = TeslaCommands.GetLocation(id);
@@ -211,6 +224,7 @@ namespace Tsla.Works.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public JsonResult GetState(string id)
         {
             TeslaState state = TeslaCommands.WakeUp(id);
